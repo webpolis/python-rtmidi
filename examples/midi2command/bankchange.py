@@ -1,9 +1,9 @@
-#!usr/bin/env python
+#!/usr/bin/env python
 #
 # bankchange.py
 # Stephane Gagnon
 # www.StephaneGagnon.net
-# Send a bank select cc0, cc32, pc 
+# Send a bank select cc0, cc32, pc
 # Optionally send a note, velocity and duration
 #
 
@@ -12,96 +12,101 @@ import logging
 import sys
 import time
 
-import rtmidi
 from rtmidi.midiutil import open_midiport
 from rtmidi.midiconstants import *
 
+
 log = logging.getLogger('bankchange')
+
 
 # Message Container
 class MidiMessage(object):
-    def __init__(self, channel=None):
+    def __init__(self, midiout, channel=None):
+        self.midiout = midiout
+        self.channel = channel - 1
 
-        self.Channel = channel-1
+    def all_notes_off(self):
+        self.midiout.send_message([CONTROLLER_CHANGE + self.channel, 120, 0])
 
-    def AllNoteOff(self):
-        self.AllNoteOff=[CONTROLLER_CHANGE+self.Channel, 120, 0] 
-        MidiOut.send_message(self.AllNoteOff)
-        
-    def BankSelect(self, msb=None, lsb=None, program=None):
-        bank = BankSelect(self.Channel, msb, lsb, program)  
-        bank.Send()
-        del bank
+    def bank_select(self, msb=None, lsb=None, program=None):
+        BankSelect(self.midiout, self.channel, msb, lsb, program).send()
 
-    def SendNote(self, note=None, velocity=100, duration=1):
-        _note = Note(self.Channel, note,velocity, duration)
-        _note.Play()
-        del _note
+    def send_note(self, note=None, velocity=100, duration=1):
+        Note(self.midiout, self.channel, note, velocity, duration).play()
+
 
 # Note object
 class Note(object):
-    def __init__(self, channel=None, note=None, velocity=100, duration=1):
+    def __init__(self, midiout, channel=None, note=None, velocity=100,
+                 duration=1):
+        self.midiout = midiout
+        self.note_on = [NOTE_ON + channel, note, velocity]
+        self.note_off = [NOTE_OFF + channel, note, 0]
 
-        if duration is None: 
-            self.Duration=1
+        if duration is None:
+            self.duration = 1
         else:
-            self.Duration=duration
+            self.duration = duration
 
-        if velocity is None: 
-            velocity=100
+        if velocity is None:
+            velocity = 100
 
-        self.Note_On = [NOTE_ON+channel, note, velocity]
-        self.Note_Off = [NOTE_OFF+channel, note, 0]
+    def play(self):
+        """Play the note."""
+        self.midiout.send_message(self.note_on)
+        time.sleep(self.duration) # note length
+        self.midiout.send_message(self.note_off)
 
-    # Play the note
-    def Play(self):
-        MidiOut.send_message(self.Note_On)
-        time.sleep(self.Duration) # note length
-        MidiOut.send_message(self.Note_Off)
 
 # Bank Select object
 class BankSelect(object):
-    def __init__(self, channel=None, msb=None, lsb=None, program=None):
+    def __init__(self, midiout, channel=None, msb=None, lsb=None,
+                 program=None):
+        self.midiout = midiout
+        self.channel = channel
+        self.program = program - 1
+        self.msb = msb
+        self.lsb = lsb
 
-        self.Channel=channel
-        self.ProgramNumber=program-1
-        self.MSB=msb
-        self.LSB=lsb
+        self.bank_select_msb = [CONTROLLER_CHANGE + self.channel, BANK_SELECT,
+                                self.msb]
+        self.bank_select_lsb = [CONTROLLER_CHANGE + self.channel,
+                                BANK_SELECT_LSB, self.lsb]
+        self.program_change = [PROGRAM_CHANGE + self.channel, self.program]
 
-        self.CC0=[CONTROLLER_CHANGE+self.Channel, BANK_SELECT, self.MSB] 
-        self.CC32=[CONTROLLER_CHANGE+self.Channel, BANK_SELECT_LSB,self.LSB] 
-        self.ProgramChange=[PROGRAM_CHANGE+self.Channel, self.ProgramNumber]
+    def send(self):
+        """Send a bank change."""
 
-    # Send a bank change
-    def Send(self):
-        MidiOut.send_message(self.CC0)
-        MidiOut.send_message(self.CC32)
-        MidiOut.send_message(self.ProgramChange)
-        time.sleep(0.1)  # give time for the MIDI device to process the bank change before sending not if specified
+        self.midiout.send_message(self.bank_select_msb)
+        self.midiout.send_message(self.bank_select_msb)
+        self.midiout.send_message(self.program_change)
+        # give time for the MIDI device to process the bank change
+        # before sending note if specified
+        time.sleep(0.1)
+
 
 def main(args=None):
 #
 #    Main program function.
 #
-
     parser = argparse.ArgumentParser(description='BankChange Script')
-    parser.add_argument('-p',  '--port', dest='port',
+    parser.add_argument('-p', '--port', dest='port',
         help='MIDI output port name or number (default: open virtual input)')
-    parser.add_argument('-v',  '--verbose', action="store_true",
+    parser.add_argument('-v', '--verbose', action="store_true",
         help='verbose output')
-    parser.add_argument('-c',  '--channel', dest='channel', type=int,
+    parser.add_argument('-c', '--channel', dest='channel', type=int,
         help='Channel number 1-16')
-    parser.add_argument('-m',  '--msb', dest='msb', type=int,
+    parser.add_argument('-m', '--msb', dest='msb', type=int,
         help='MSB Value')
-    parser.add_argument('-l',  '--lsb', dest='lsb', type=int,
+    parser.add_argument('-l', '--lsb', dest='lsb', type=int,
         help='LSB Value')
-    parser.add_argument('-pc',  '--program', dest='program', type=int,
+    parser.add_argument('-pc', '--program', dest='program', type=int,
         help='Program Change')
-    parser.add_argument('-n',  '--note', dest='note', type=int,
+    parser.add_argument('-n', '--note', dest='note', type=int,
         help='Note Value')
-    parser.add_argument('-vel',  '--velocity', dest='velocity', type=int,
+    parser.add_argument('-vel', '--velocity', dest='velocity', type=int,
         help='Note velocity, default=100')
-    parser.add_argument('-d',  '--duration', dest='duration', type=int,
+    parser.add_argument('-d', '--duration', dest='duration', type=int,
         help='Note duration, default=1')
 
     args = parser.parse_args(args if args is not None else sys.argv[1:])
@@ -110,27 +115,27 @@ def main(args=None):
         level=logging.DEBUG if args.verbose else logging.WARNING)
 
     try:
-        global MidiOut 
-		MidiOut, port_name = open_midiport(args.port, "output")
+        midiout, port_name = open_midiport(args.port, "output")
     except (EOFError, KeyboardInterrupt):
-        sys.exit()
+        return
 
     #log.info("Sending message out...")
 
     try:
-        message = MidiMessage(args.channel)
-        # Helper if you note stay on 
-		# message.AllNoteOff()
-        message.BankSelect(args.msb, args.lsb, args.program) 
+        message = MidiMessage(midiout, args.channel)
+        # Helper if you have hanging notes:
+        # message.all_notes_off()
+        message.bank_select(args.msb, args.lsb, args.program)
+
         if args.note is not None:
-            message.SendNote(args.note, args.velocity, args.duration)
-        del message
+            message.send_note(args.note, args.velocity, args.duration)
     except:
-        print "Unexpected error:", sys.exc_info()[0]
+        print("Unexpected error: %s" % sys.exc_info()[0])
     finally:
         print('Done')
-        MidiOut.close_port()
-        del MidiOut
+        midiout.close_port()
+        del midiout
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]) or 0)
