@@ -2,33 +2,73 @@ Changelog
 =========
 
 For details and minor changes, please see the `version control log messages
-<http://trac.chrisarndt.de/code/log/projects/python-rtmidi/trunk>`_.
+<https://github.com/SpotlightKid/python-rtmidi/commits/master>`_.
 
 
-2015-06-21 version 0.6b1
+2015-10-28 version 0.6b1
 ------------------------
+
+Project infrastructure:
+  * Moved repository to Github.
+
+Fixes:
+  * ``midiutil.open_port``:
+
+    * Correctly report and log I/O direction and instance type.
+    * Fix naming of virtual port.
 
 Enhancements / Changes:
   * Synced with upstream RtMidi_ (2.1.0-16-g28321c0).
+  * Some source code re-ordering.
+  * ``midiutil.open_port``:
+
+    RtMid API to use can be specified via the ``RTMIDI_API`` environment
+    variable. Only used when ``API_UNSPECIFIED`` is passed for the ``api``
+    argument. Value should be one of the ``API_*`` constant names with out the
+    ``API_`` prefix, e.g. ``UNIX_JACK`` for thr Jack API.
+
+Documentation:
+  * Documented exceptions raised by `MidiIn/Out.open_[virtual_]port()`.
+  * Some docstring corrections and formatting fixes.
 
 Building:
   * Simplified ``setup.py`` by throwing out old compatibility stuff.
+  * Explicitly call `PyEval_InitThreads` from Cython code instead of using
+    undocumented compiler macro.
 
 Examples:
-  * ``midifilter``: moved ``main.py`` to ``__main__.py``, removed old code and
-    fixed command line args access.
+  * Add new ``sequencer`` example.
+
+  * ``midifilter``:
+
+    * Moved ``main.py`` to ``__main__.py``, removed old code and fixed command
+      line args access.
+    * Streamline event matching.
+    * Added ``CCToBankChange`` filter.
+    * ``Queue`` module renamed to ``queue`` in Python 3.
+    * Fixed: opening of output port erroneously used ``"input"``.
+    * Fixed positional command line args handling.
+    * Set command name for argparse.
+
+  * ``midi2command``:
+
+    * Added README.
+    * Added command line option to select backend API.
+    * Catch errors when opening port.
+    * Set client and port name.
+    * Cache command lookup (Python 3.2+ only).
 
   * ``sysexsaver``:
 
     * Moved ``main.py`` to ``__main__.py``, some refactoring.
-    * ``models.py``: Fixed wrong entry for manufacturer (0, 32, 81).
+    * ``models.py``: Fixed wrong entry for manufacturer ``(0, 32, 81)``.
     * Moved module level code into ``main`` function.
     * Include model name in output file, if possible.
 
   * ``drumseq``:
 
     * Fixed global access in ``Sequencer`` class.
-    * Use ``args.FileType`` for pattern command line args
+    * Use ``args.FileType`` for pattern command line args.
 
 
 2014-06-11 version 0.5b1
