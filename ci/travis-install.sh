@@ -19,7 +19,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     # Install Linux build dependencies via package manager
     sudo apt-get update -q -y
-    sudo apt-get -y -q install build-essential libasound2-dev libjack-jackd2-dev
+    sudo apt-get -y -q install build-essential libasound2-dev libjack-dev
     EXTRA_PIP_ARGS=""
 else
     echo "Unsupported build OS environment $TRAVIS_OS_NAME. Aborting." > /dev/stderr
