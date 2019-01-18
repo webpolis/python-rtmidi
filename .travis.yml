@@ -1,54 +1,56 @@
-language: generic
-
-os:
-  - linux
-  - osx
+language: python
 
 cache: pip
 
 matrix:
   include:
     - name: "Python 2.7 (OS X)"
+      os: osx
       osx_image: xcode8
+      language: generic
       env:
         PYTHON: python2.7
         PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/2.7.15/python-2.7.15-macosx10.6.pkg
         PYTHON_INSTALLER_MD5: 9ac8c85150147f679f213addd1e7d96e
         PATH: /Users/travis/Library/Python/2.7/bin:$PATH
     - name: "Python 3.6 (OS X)"
+      os: osx
       osx_image: xcode8
+      language: generic
       env:
         PYTHON: python3.6
         PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.6.6/python-3.6.6-macosx10.6.pkg
         PYTHON_INSTALLER_MD5: c58267cab96f6d291d332a2b163edd33
         PATH: /Users/travis/Library/Python/3.6/bin:$PATH
     - name: "Python 3.7 (OS X)"
+      os: osx
       osx_image: xcode8
+      language: generic
       env:
         PYTHON: python3.7
         PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.7.0/python-3.7.0-macosx10.6.pkg
         PYTHON_INSTALLER_MD5: ca3eb84092d0ff6d02e42f63a734338e
         PATH: /Users/travis/Library/Python/3.7/bin:$PATH
     - name: "Python 2.7 (Linux)"
+      os: linux
       dist: xenial
-      env:
-        PYTHON: python2.7
+      python: "2.7"
     - name: "Python 3.4 (Linux)"
+      os: linux
       dist: xenial
-      env:
-        PYTHON: python3.4
+      python: "3.4"
     - name: "Python 3.5 (Linux)"
+      os: linux
       dist: xenial
-      env:
-        PYTHON: python3.5
+      python: "3.5"
     - name: "Python 3.6 (Linux)"
+      os: linux
       dist: xenial
-      env:
-        PYTHON: python3.6
+      python: "3.6"
     - name: "Python 3.7 (Linux)"
+      os: linux
       dist: xenial
-      env:
-        PYTHON: python3.7
+      python: "3.7"
 
 git:
   depth: 1
