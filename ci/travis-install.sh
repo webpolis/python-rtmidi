@@ -12,7 +12,7 @@ fi
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     # Install macOS / OS X build dependencies (i.e. Python) via official
     # installers from python.org
-    wget -O python.pkg "$PYTHON_INSTALLER_URL"
+    wget -nv -O python.pkg "$PYTHON_INSTALLER_URL"
     test "$(md5 -q python.pkg)" = $PYTHON_INSTALLER_MD5
     sudo installer -pkg python.pkg -target /
     EXTRA_PIP_ARGS="--user"
