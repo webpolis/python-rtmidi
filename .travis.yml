@@ -1,6 +1,9 @@
 language: python
 
-cache: pip
+cache:
+  - pip
+  - directories:
+    - /Users/travis/Library/Caches/pip
 
 matrix:
   include:
