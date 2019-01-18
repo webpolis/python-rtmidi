@@ -17,15 +17,6 @@ matrix:
         PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/2.7.15/python-2.7.15-macosx10.6.pkg
         PYTHON_INSTALLER_MD5: 9ac8c85150147f679f213addd1e7d96e
         PATH: /Users/travis/Library/Python/2.7/bin:$PATH
-    - name: "Python 3.5 (OS X)"
-      os: osx
-      osx_image: xcode8
-      language: generic
-      env:
-        PYTHON: python3.5
-        PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.5.4/python-3.5.4-macosx10.6.pkg
-        PYTHON_INSTALLER_MD5: 96bf5d47777e8352209f743c06bed555
-        PATH: /Users/travis/Library/Python/3.5/bin:$PATH
     - name: "Python 3.6 (OS X)"
       os: osx
       osx_image: xcode8
