@@ -3,7 +3,8 @@ language: python
 cache:
   - pip
   - directories:
-    - /Users/travis/Library/Caches/pip
+    - $HOME/Library/Caches/pip
+    - $HOME/Download
 
 matrix:
   include:
@@ -16,14 +17,23 @@ matrix:
         PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/2.7.15/python-2.7.15-macosx10.6.pkg
         PYTHON_INSTALLER_MD5: 9ac8c85150147f679f213addd1e7d96e
         PATH: /Users/travis/Library/Python/2.7/bin:$PATH
+    - name: "Python 3.5 (OS X)"
+      os: osx
+      osx_image: xcode8
+      language: generic
+      env:
+        PYTHON: python3.5
+        PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.5.4/python-3.5.4-macosx10.6.pkg
+        PYTHON_INSTALLER_MD5: 96bf5d47777e8352209f743c06bed555
+        PATH: /Users/travis/Library/Python/3.5/bin:$PATH
     - name: "Python 3.6 (OS X)"
       os: osx
       osx_image: xcode8
       language: generic
       env:
         PYTHON: python3.6
-        PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.6.6/python-3.6.6-macosx10.6.pkg
-        PYTHON_INSTALLER_MD5: c58267cab96f6d291d332a2b163edd33
+        PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.6.8/python-3.6.8-macosx10.6.pkg
+        PYTHON_INSTALLER_MD5: eb1a23d762946329c2aa3448d256d421
         PATH: /Users/travis/Library/Python/3.6/bin:$PATH
     - name: "Python 3.7 (OS X)"
       os: osx
@@ -31,8 +41,8 @@ matrix:
       language: generic
       env:
         PYTHON: python3.7
-        PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.7.0/python-3.7.0-macosx10.6.pkg
-        PYTHON_INSTALLER_MD5: ca3eb84092d0ff6d02e42f63a734338e
+        PYTHON_INSTALLER_URL: https://www.python.org/ftp/python/3.7.2/python-3.7.2-macosx10.6.pkg
+        PYTHON_INSTALLER_MD5: d8ff07973bc9c009de80c269fd7efcca
         PATH: /Users/travis/Library/Python/3.7/bin:$PATH
     - name: "Python 2.7 (Linux)"
       os: linux

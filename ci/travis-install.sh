@@ -5,6 +5,8 @@
 
 set -ev
 
+DOWNLOAD_DIR="$HOME/Download"
+
 if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     PYTHON=python
 fi
@@ -12,9 +14,10 @@ fi
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     # Install macOS / OS X build dependencies (i.e. Python) via official
     # installers from python.org
-    wget -nv -O python.pkg "$PYTHON_INSTALLER_URL"
-    test "$(md5 -q python.pkg)" = $PYTHON_INSTALLER_MD5
-    sudo installer -pkg python.pkg -target /
+    mkdir -p "$DOWNLOAD_DIR"
+    wget -c -nv -O "$DOWNLOAD_DIR"/python.pkg "$PYTHON_INSTALLER_URL"
+    test "$(md5 -q $DOWNLOAD_DIR/python.pkg)" = $PYTHON_INSTALLER_MD5
+    sudo installer -pkg "$DOWNLOAD_DIR"/python.pkg -target /
     EXTRA_PIP_ARGS="--user"
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     # Install Linux build dependencies via package manager
