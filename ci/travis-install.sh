@@ -9,9 +9,6 @@ if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     PYTHON=python
 fi
 
-# Report Python version used for this build
-"$PYTHON" --version
-
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     # Install macOS / OS X build dependencies (i.e. Python) via official
     # installers from python.org
@@ -29,6 +26,8 @@ else
     exit 1
 fi
 
+# Report Python version used for this build
+"$PYTHON" --version
 # Update packaging tools
 "$PYTHON" -m pip --disable-pip-version-check install ${EXTRA_PIP_ARGS} -U pip setuptools wheel
 # Install Python build and deployment dependencies

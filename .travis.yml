@@ -60,11 +60,12 @@ install:
 
 script:
   - export SOURCE_DATE_EPOCH="$(git log -1 --date=unix --format='format:%ct' rtmidi/release.py)"
-  - $PYTHON setup.py release
+  - ${PYTHON:-python} setup.py release
 
 deploy:
   provider: script
   skip_cleanup: true
-  script: $PYTHON -m twine upload --skip-existing dist/*.whl
+  script:
+    - ${PYTHON:-python} -m twine upload --skip-existing dist/*.whl
   on:
     condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
