@@ -1,4 +1,4 @@
 [submodule "src/rtmidi"]
 	path = src/rtmidi
-	url = https://github.com/SpotlightKid/rtmidi.git
+	url = https://github.com/webpolis/rtmidi.git
 	branch = python-rtmidi
